@@ -1,0 +1,373 @@
+---
+title: "Problem Set Questions"
+format: html
+editor: visual
+---
+
+## Setup
+
+## Question 1
+
+1.  Edit the following code so that the plot accurately reflects the axis labels and the subset functions returns an object with only the contents intended (as shown in the preceding comment to the function). Using indexing and regular expression tools in **base R**, extend the code to calculate the proportions of manual and automatic shift cars in the study
+
+```{r eval=FALSE, include=TRUE}
+data(mpg)
+
+# Scatter plot with base R
+plot(mpg$disp1, mpg$hwy, col = as.factor(mpg$Year), 
+     xlab = "Displacement", ylab = "Highway Miles per Gallon", pch = 19)
+legend("topright", legend = unique(mpg$Year), col = unique(as.factor(mpg$Year)), pch = 19)
+
+# Use base R to filter the data where cyl equals 8
+subset(mpg, cy1 = '8')
+```
+
+Corrected:
+
+```{r}
+library(ggplot2) # ggplot2 package loaded
+data('mpg')
+# Scatter plot with base R
+plot(mpg$displ, mpg$hwy, col = as.factor(mpg$year),
+     xlab = "Displacement", ylab = "Highway Miles per Gallon", pch = 19) # disp1 corrected to displ
+legend("topright", legend = unique(mpg$year), col = unique(as.factor(mpg$year)), pch = 19)
+#disp1 corrected to displ
+#Year corrected to year (lower case y needed)
+
+# Use base R to filter the data where cyl equals 8
+subset(mpg, cyl == 8)
+# cy1 corrected to cyl
+# = corrected to ==
+```
+
+## Question 2
+
+2.  Write pseudocode steps for calculating the volume of a cylinder (hint, if you do not know it by heart, you may need to research the equation for the volume of a cylinder!). For a cylinder of height = 3.2 cm and end radius of 5.5 cm, report the volume in cm to 2 decimal points of accuracy. Use at least 3 decimal points of accuracy for pi (hint, the quantity named pi is a standard variable in R!)
+
+```{r}
+# Overall task: calculate the volume of a cylinder with height 3.2 cm and radius 5.5 cm, to 2 decimal places.
+
+# Step 1: Calculate the area of an end circle using the formula pi * r^2
+# Step 2: Multiply the circle area by the height of the cylinder.
+
+# Step 1:
+pi * 5.5^2
+circle_area <- pi * 5.5^2
+
+# Step 2:
+cylinder_volume <- circle_area * 3.2
+round(cylinder_volume, 2)
+
+# Answer is 304.11 cm
+
+```
+
+## Question 3
+
+3.  In your own words, what value is required for the `d` argument in the `pwr.t.test()` function in the `{pwr}` package? Show the code involved including any appropriate comment code required to answer this question. (hint: you will probably need to install the package, load it, and use help() on the function name)
+
+```{r}
+
+library(pwr)
+help(pwr.t.test)
+# Using the help() function displays the following information about the pwr.t.test() function's usage:
+
+# pwr.t.test(n = NULL, d = NULL, sig.level = 0.05, power = NULL,
+# type = c("two.sample", "one.sample", "paired"),
+# alternative = c("two.sided", "less", "greater"))
+
+help(pwr.t.test)
+# Under the list of arguments in the help window, d is defined as:
+# Effect size (Cohen's d) - difference between the means divided by the pooled standard deviation
+
+# Therefore, the means of the data should be calculated and subtracted from each other. This finds the difference in mean. The standard deviation of this difference should then be calculated. This will give you the value of the effect size, which is 'd'.
+
+
+```
+
+## Question 4
+
+4.  Using the code chunk below, please answer the following questions:
+
+-   What is the role of the `set.seed()` function in the context of this code?
+
+-   Why does calculating the mean of the copied original matrix return a numeric value while the mean of the same matrix when missing values are filled from the list returns `NA`?
+
+-   Please fix the code such that `mean_of_original_copy` and `mean_matrix` are equal
+
+```{r eval=FALSE, include=TRUE}
+    # Step 1: Create a 3x3 matrix with random numbers, and introduce NAs
+    set.seed(123) 
+    matrix_with_na <- matrix(sample(c(NA, 1:9), 9, replace = TRUE), nrow = 3)
+    copy_of_original<-matrix_with_na
+    matrix_with_na[1,2] <- NA  # Introduce 3 specific NAs
+    matrix_with_na[2,3] <- NA
+    matrix_with_na[3,1] <- NA
+
+
+    print("Original Matrix with NAs:")
+    print(matrix_with_na)
+
+    # Step 2: Create a list with the same structure but no NAs
+    list_with_values <- as.list(as.character(matrix(1:9, nrow = 3)))
+    print(list_with_values)
+
+    # Step 3: Use a for-loop to find the corresponding missing number from the list and fill the matrix
+    for (i in 1:3) {
+      for (j in 1:3) {
+        if (is.na(matrix_with_na[i,j])) {
+          matrix_with_na[i,j] <- list_with_values[[(i-1)*3 + j]]  # Replace with corresponding value from list
+        }
+      }
+    }
+
+    print(matrix_with_na)
+
+    # Step 4: Try calculating the mean of the matrices
+    mean_matrix <- mean(matrix_with_na)
+    mean_of_original_copy <- mean(copy_of_original)
+    print(mean_of_original_copy)
+    print(mean_matrix)
+```
+
+Corrected:
+
+```{r}
+# 4.1 set.seed allows the results to be reproducible.
+
+# 4.2 The copied original matrix, is a matrix which holds numerical data. This means that the mean can be calculated.
+# The mean of the same matrix after values have been filled in from the list, returns NA because it does not contain numerical data.
+# The line where the list is created contains the function as.character. This means that the data in the list are all characters.
+# The square brackets [] are used to index, but this can also change data type. The data type of the matrix is changed.
+
+# 4.3 
+
+# Step 1: Create a 3x3 matrix with random numbers, and introduce NAs
+set.seed(123)
+matrix_with_na <- matrix(sample(c(NA, 1:9), 9, replace = TRUE), nrow = 3)
+copy_of_original<-matrix_with_na
+matrix_with_na[1,2] <- NA  # Introduce 3 specific NAs
+matrix_with_na[2,3] <- NA
+matrix_with_na[3,1] <- NA
+
+
+print("Original Matrix with NAs:")
+print(matrix_with_na)
+
+# Step 2: Create a list with the same structure but no NAs
+list_with_values <- as.list(as.numeric(matrix(1:9, nrow = 3)))
+print(list_with_values)
+
+# Step 3: Use a for-loop to find the corresponding missing number from the list and fill the matrix
+for (i in 1:3) {
+  for (j in 1:3) {
+    if (is.na(matrix_with_na[i,j])) {
+      matrix_with_na[i,j] <- list_with_values[[(i-1)*3 + j]]  # Replace with corresponding value from list
+    }
+  }
+}
+
+print(matrix_with_na)
+
+# Step 4: Try calculating the mean of the matrices
+mean_matrix <- mean(matrix_with_na)
+mean_of_original_copy <- mean(copy_of_original)
+print(mean_of_original_copy)
+print(mean_matrix)
+
+```
+
+## Question 5
+
+5.  Explain why this function is not working and return the working equivalent. Interpret what the estimate means and rank the species
+
+```{r eval=FALSE, include=TRUE}
+    # Load necessary package
+    install.packages('emmeans')
+    library(emmeans)
+
+    run_anova_posthoc <- function() {
+      # Perform ANOVA on the iris dataset
+      anova_result <- aov(Sepal.Length ~ Species, data = iris)
+      
+      # Perform post-hoc test using emmeans
+      posthoc_result <- emmeans(anova_result, pairwise ~ Species)
+      
+      comparisons <- as.data.frame(posthoc_result$contrasts)
+      
+      print(comparisons)
+      comparisons_df <- data.frame(Species = comparisons$species,
+                                   estimate = comparisons$estimate,
+                                   p.value = comparisons$p.value)
+      
+      return(comparisons_df)
+    }
+
+
+    run_anova_posthoc()
+```
+
+Corrected:
+
+```{r}
+# Load necessary package
+
+# The original code did not work for the following reasons:
+# 1 In the original code, 
+# install.packages('emmeans')
+library(emmeans)
+data(iris)
+iris
+run_anova_posthoc <- function() {
+  # Perform ANOVA on the iris dataset
+  anova_result <- aov(Sepal.Length ~ Species, data = iris)
+  
+  # Perform post-hoc test using emmeans
+  posthoc_result <- emmeans(anova_result, pairwise ~ Species)
+  
+  comparisons <- as.data.frame(posthoc_result$contrasts)
+  
+  print(comparisons)
+  comparisons_df <- data.frame(contrast = comparisons$contrast,
+                               estimate = comparisons$estimate,
+                               p.value = comparisons$p.value)
+  
+  return(comparisons_df)
+}
+
+
+run_anova_posthoc()
+
+aov_posthoc <- run_anova_posthoc()
+
+print(aov_posthoc)
+
+
+# The estimate is the difference in the means betwen 2 groups. For example:
+# The first row in the aov_posthoc table reads:
+#                 contrast estimate      p.value
+# 1    setosa - versicolor   -0.930 3.386180e-14
+# Here, the estimate is the mean difference between the setosa and versicolor.
+# Because the value is negative, the mean sepal length of setosa is smaller than the mean sepal length of versicolor.
+
+
+# Setosa is smaller than versicolor, and virginica. Versicolor is smaller than virginica.
+
+# Therefore the ranking of the species from largest sepal length to smallest is:
+# 1. Virgiica
+# 2. Versicolor
+# 3. Setosa
+```
+
+## Question 6
+
+6.  Using the iris dataset in R, conduct an anova of sepal length ‘by hand’ and report the F statistic. Feel free to use other packages for **data wrangling/grouping only**, but for each function used, appropriately comment on what it does and which package it comes from. Show your R code.
+
+```{r}
+data(iris) # Load data
+library(dplyr)
+
+setosa <- filter(iris, Species == 'setosa')          
+versicolor <- filter(iris, Species == 'versicolor')
+virginica <- filter(iris, Species == 'virginica')
+# The filter function is from the dplyr package. Used here to separate the data by species.
+
+species_data <- data.frame(setosa$Sepal.Length, versicolor$Sepal.Length, virginica$Sepal.Length)
+
+# Determine the number of groups and the number of observations per group
+k <- ncol(species_data)   # the number of groups
+n_per_group <- vector(mode = 'integer', length = ncol(species_data))
+for(i in 1:k) {
+  n_per_group[i] <- length(species_data[, i])
+}                 # the for loop goes through each group, counting the number of observations.
+
+# Determine the number of individual observations
+n_total <- ncol(species_data) * nrow(species_data)    
+# Determine degrees of freedom
+df_between <- k - 1       # Degrees of freedom between the groups
+df_within <- n_total - k  # Degrees of freedom within each group
+
+
+# Means
+grand_mean <- mean(as.matrix(species_data)) # the total mean of all of the data in species_data
+mean_per_group <- colMeans(species_data) # the mean for each group
+# Calculate sum of Squares between
+ss_between <- sum(n_per_group * (mean_per_group - grand_mean)^2)
+# Print sum of squares between
+ss_between
+# Calculate sum of squares within
+ss_within <- sum(sum((species_data[, 1] - mean_per_group[1])^2),
+                 sum((species_data[, 2] - mean_per_group[2])^2),
+                 sum((species_data[, 3] - mean_per_group[3])^2)
+)
+# Print sum of squares within
+ss_within
+
+# Calculate mean square between
+msq_between <- ss_between / df_between
+msq_between # print answer
+# Calculate mean square within
+msq_within <- ss_within / df_within
+msq_within # print answer
+
+# Find F Value
+f_value <- msq_between / msq_within
+# Print F Value
+f_value
+
+# The f value is 119.2645.
+f_value <- round(f_value, 1) # round to one decimal place
+# Print f value
+print(f_value) # 119.3
+
+# Check the answer by comparing to the aov() function
+
+iris_aov <- aov(Sepal.Length ~ Species, data = iris)
+summary(iris_aov)
+# The f value is the 119.3, which is the same as the f value I achieved by hand.
+```
+
+## Question 7
+
+7.  Using the Plant Growth data, create a boxplot (with appropriate axis titles) showing the weights of the plants in all groups. Then using ggplot2, create the same boxplot. When are boxplots useful in data analysis?
+
+```{r}
+data('PlantGrowth')
+print(PlantGrowth)
+boxplot(weight ~ group,                                 # Create a boxplot of weight, for each group
+        data = PlantGrowth,                             # Select data
+        main = 'Boxplot of Plant Weight by Group',      # Main title for plot
+        xlab = 'Plant Group',                           # x-axis title
+        ylab = 'Weight (g)')                            # y-axis title
+
+
+library(ggplot2)
+ggplot(data = PlantGrowth, aes(x = group, y = weight)) +
+  geom_boxplot() +
+  labs(title = 'Boxplot of Plant Weight by Group', x = 'Plant Group', y = 'Weight(g)')
+
+
+# Boxplots are useful in displaying results, specifically for when there are multiple groups. They are often used in addition to ANOVAS because they show the variation in all the groups.
+```
+
+## Question 8
+
+Fix the code so that it correctly indexes the deepest nested list and returns the 4th number in that list. Then add another list of single digit even numbers within the original list. Index to find the 4th item.
+
+```{r eval=FALSE, include=TRUE}
+my_list <- list(list(1, 2:3, c(1, 3, 5, 7, 9)), 2)
+my_list[[1]][[2]][4]
+```
+
+Corrected:
+
+```{r}
+my_list_2 <- list(list(1, 2:3, list(1, 3, 5, 7, 9)), 2)          # c() was used instead of list(). Using list() created the nested list, rather than a vector as an item.
+my_list_2[[1]][[3]][4]                                               # The second item was being indexed, which did not contain the third list. Therefore, it was not working.
+# Indexed value is 7.
+
+my_list_3 <- list(list(1, 2:3, list(1, 3, 5, 7, 9), list(2, 4, 6, 8)), 2)    # Added another list of even numbers.
+str(my_list_3)
+my_list_3[[1]][[4]][4]                                                       # Indexed to find the correct number.
+# Indexed value is 8.
+```
